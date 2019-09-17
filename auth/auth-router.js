@@ -5,9 +5,9 @@ const Users = require('../users/users-model');
 const restricted = require('./restricted-middleware');
 
 router.post('/register', (req, res) => {
-  let {username, password} = req.body;
+  let {username, password, email, firstname, lastname} = req.body;
   const hash = bcrypt.hashSync(password, 14)
-  Users.add({username, password: hash})
+  Users.add({firstname, lastname, email, username, password: hash})
     .then(saved => {
       res.status(201).json(saved);
     })
@@ -24,7 +24,7 @@ router.post('/login', (req, res) => {
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
         req.session.user = user;
-        res.status(200).json({ message: `Welcome ${user.username}!` });
+        res.status(200).json({ message: `Welcome ${user.firstname}!` });
       } else {
         res.status(401).json({ message: 'Invalid Credentials' });
       }
@@ -48,7 +48,7 @@ router.get('/logout', (req, res) => {
       if(error) {
         res.status(500).json({message: 'Try again'})
       }else{
-        res.status(200).json({message: 'Come back soon.'})
+        res.status(200).json({message: 'Come back soon!'})
       }
     });
   }else{
